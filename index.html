@@ -36,8 +36,6 @@ body{
   min-height: 100vh;
   overflow-x: hidden;
 }
-
-/* Background Original 3D Bubble Canvas */
 #bg3d {
   position: fixed;
   inset: 0;
@@ -47,23 +45,11 @@ body{
   pointer-events: none;
   display: block;
 }
-
-/* TOPMOST FOREGROUND MAGIC SPARKLE CANVAS (Works Everywhere!) */
-#magicEverywhereCanvas {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999999;
-  pointer-events: none;
-  display: block;
-}
-
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(245, 247, 251, 0.48);
+  background: rgba(245, 247, 251, 0.55);
   z-index: 1;
   pointer-events: none;
 }
@@ -82,7 +68,7 @@ header{
 }
 .brand{display:flex;align-items:center;gap:14px}
 
-/* ===== LOGO — Cloud Mascot ===== */
+/* ===== LOGO — Cloud Mascot (Balanced Zoom 1.10) ===== */
 .logo{
   width:62px;
   height:62px;
@@ -378,11 +364,8 @@ footer a:hover{text-decoration:underline}
 </head>
 <body>
 
-<!-- Original 3D Bubble Canvas -->
+<!-- 3D Animated Background Canvas -->
 <canvas id="bg3d"></canvas>
-
-<!-- FOREGROUND MAGIC SPARKLE DUST CANVAS (Always Visible Above Everything!) -->
-<canvas id="magicEverywhereCanvas"></canvas>
 
 <div class="app">
 
@@ -555,137 +538,7 @@ footer a:hover{text-decoration:underline}
 
 <script>
 /* ============================================================
-   MAGIC STAR SPARKLES & GLOW TRAIL (EVERYWHERE OVER EVERYTHING!)
-   Triggers everywhere on screen: on text, cards, buttons, background!
-   ============================================================ */
-(function initMagicEverywhere(){
-  const canvas = document.getElementById('magicEverywhereCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-
-  function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  const stars = [];
-  let mouse = { x: -100, y: -100, lastX: -100, lastY: -100 };
-
-  // Palettes: Indigo, Sky Blue, Pink Sparkle, Golden Yellow
-  const colors = [
-    '#635bff', // Primary Indigo
-    '#00d4ff', // Cyan Neon
-    '#ff4081', // Pink Glow
-    '#ffd700', // Gold Shimmer
-    '#a855f7'  // Violet Magic
-  ];
-
-  window.addEventListener('mousemove', e => {
-    mouse.lastX = mouse.x;
-    mouse.lastY = mouse.y;
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-
-    const dist = Math.hypot(mouse.x - mouse.lastX, mouse.y - mouse.lastY);
-    // Create magical 4-point sparkle stars with physics
-    const count = Math.min(5, Math.floor(dist / 4) + 1);
-
-    for(let i = 0; i < count; i++){
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 2 + 0.6;
-      stars.push({
-        x: mouse.x + (Math.random() * 10 - 5),
-        y: mouse.y + (Math.random() * 10 - 5),
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 0.4, // gently drifts upwards
-        size: Math.random() * 7 + 4,        // visible sparkling stars
-        rotation: Math.random() * Math.PI,
-        rotSpeed: (Math.random() - 0.5) * 0.15,
-        life: 1,
-        decay: Math.random() * 0.025 + 0.015,
-        color: colors[Math.floor(Math.random() * colors.length)]
-      });
-    }
-  }, { passive: true });
-
-  // Magical fireworks burst on click anywhere
-  window.addEventListener('click', e => {
-    for(let i = 0; i < 28; i++){
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 5 + 1.5;
-      stars.push({
-        x: e.clientX,
-        y: e.clientY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: Math.random() * 9 + 4,
-        rotation: Math.random() * Math.PI,
-        rotSpeed: (Math.random() - 0.5) * 0.2,
-        life: 1,
-        decay: Math.random() * 0.02 + 0.012,
-        color: colors[Math.floor(Math.random() * colors.length)]
-      });
-    }
-  });
-
-  // Function to draw a 4-point magical twinkling star
-  function drawSparkleStar(cx, cy, r, rot, color, alpha) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rot);
-    ctx.globalAlpha = alpha;
-
-    ctx.fillStyle = color;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 12;
-
-    ctx.beginPath();
-    ctx.moveTo(0, -r);
-    ctx.quadraticCurveTo(0, 0, r * 0.35, 0);
-    ctx.quadraticCurveTo(0, 0, 0, r);
-    ctx.quadraticCurveTo(0, 0, -r * 0.35, 0);
-    ctx.quadraticCurveTo(0, 0, 0, -r);
-    ctx.closePath();
-    ctx.fill();
-
-    // Center bright white sparkle
-    ctx.beginPath();
-    ctx.arc(0, 0, r * 0.25, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  function renderMagic(){
-    ctx.clearRect(0, 0, W, H);
-
-    for(let i = stars.length - 1; i >= 0; i--){
-      const s = stars[i];
-      s.x += s.vx;
-      s.y += s.vy;
-      s.vx *= 0.94;
-      s.vy *= 0.94;
-      s.rotation += s.rotSpeed;
-      s.life -= s.decay;
-
-      if(s.life <= 0){
-        stars.splice(i, 1);
-        continue;
-      }
-
-      drawSparkleStar(s.x, s.y, s.size * s.life, s.rotation, s.color, s.life);
-    }
-
-    requestAnimationFrame(renderMagic);
-  }
-  requestAnimationFrame(renderMagic);
-})();
-
-/* ============================================================
-   ENHANCED 3D BUBBLE ORBS BACKGROUND (ORIGINAL PRESERVED)
+   ENHANCED 3D BUBBLE ORBS BACKGROUND
    ============================================================ */
 (function init3D(){
   const canvas = document.getElementById('bg3d');
@@ -949,7 +802,7 @@ footer a:hover{text-decoration:underline}
 })();
 
 /* ============================================================
-   COUNTRY DATA & LOGIC (PRESERVED)
+   COUNTRY DATA
    ============================================================ */
 const pools = {
   US:{f:'James John Michael David Robert William Daniel Matthew Joseph Andrew Christopher Joshua Ryan Nicholas Tyler Emily Olivia Emma Sophia Ava Mia Isabella Charlotte Amelia Harper Evelyn'.split(' '),l:'Smith Johnson Williams Brown Jones Miller Davis Wilson Anderson Taylor Moore Jackson Martin Lee Thompson White Harris Clark Lewis Walker Hall Young King Wright Scott Green Baker Adams'.split(' ')},
@@ -1275,8 +1128,7 @@ function copyRecord(id){
   if(r.contact) lines.push('Contact: ' + r.contact);
   if(r.cookie) lines.push('Cookie: ' + r.cookie);
   if(r.notes) lines.push('Notes: ' + r.notes);
-  copyText(lines.join('
-'));
+  copyText(lines.join('\n'));
 }
 
 function deleteRecord(id){
@@ -1315,9 +1167,8 @@ function exportData(format){
     type = 'application/json;charset=utf-8'; extension = 'json';
   } else if(format === 'csv'){
     const fields = ['first','last','country','countryName','password','contact','cookie','notes','createdAt'];
-    content = '﻿' + [fields, ...records.map(r => fields.map(f => r[f] ?? ''))]
-      .map(row => row.map(csvEscape).join(',')).join('
-');
+    content = '\uFEFF' + [fields, ...records.map(r => fields.map(f => r[f] ?? ''))]
+      .map(row => row.map(csvEscape).join(',')).join('\r\n');
     type = 'text/csv;charset=utf-8'; extension = 'csv';
   } else {
     content = records.map((r,i) => [
@@ -1331,10 +1182,7 @@ function exportData(format){
       'Notes: ' + (r.notes || ''),
       'Created: ' + r.createdAt,
       '-------------------------'
-    ].join('
-')).join('
-
-');
+    ].join('\n')).join('\n\n');
     type = 'text/plain;charset=utf-8'; extension = 'txt';
   }
   downloadFile(content, type, 'nameforge-records-' + stamp + '.' + extension);
