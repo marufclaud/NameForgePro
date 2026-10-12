@@ -66,18 +66,54 @@ header{
   display:flex;align-items:center;justify-content:space-between;
   gap:16px;margin-bottom:32px;flex-wrap:wrap;
 }
-.brand{display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+
+/* ===== LOGO — Cloud Mascot (Balanced Zoom 1.10) ===== */
 .logo{
-  width:46px;height:46px;border-radius:14px;
-  display:grid;place-items:center;color:white;font-size:24px;
-  background:linear-gradient(135deg,#827aff,#5547e8);
-  box-shadow:0 8px 20px #635bff35;
+  width:62px;
+  height:62px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#eef2ff,#ddd6fe);
+  box-shadow:
+    0 8px 20px rgba(99,91,255,0.28),
+    0 0 0 1px rgba(99,91,255,0.08) inset,
+    0 2px 6px rgba(255,255,255,0.7) inset;
   animation:pulse 3s ease-in-out infinite;
+  overflow:hidden;
+  padding:0;
+  position:relative;
+  flex-shrink:0;
+}
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  transform:scale(1.10);
+  filter:drop-shadow(0 2px 4px rgba(99,91,255,0.25));
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.logo:hover img{
+  transform:scale(1.18) rotate(-6deg);
 }
 @keyframes pulse{
-  0%,100%{box-shadow:0 8px 20px #635bff35}
-  50%{box-shadow:0 8px 30px #635bff55}
+  0%,100%{
+    box-shadow:
+      0 8px 20px rgba(99,91,255,0.28),
+      0 0 0 1px rgba(99,91,255,0.08) inset,
+      0 2px 6px rgba(255,255,255,0.6) inset;
+  }
+  50%{
+    box-shadow:
+      0 8px 32px rgba(99,91,255,0.5),
+      0 0 0 1px rgba(99,91,255,0.12) inset,
+      0 2px 6px rgba(255,255,255,0.8) inset;
+  }
 }
+
 .brand h2{margin:0;font-size:21px;letter-spacing:-.6px}
 .brand p{margin:3px 0 0;font-size:12px;color:var(--muted)}
 .header-tag{
@@ -320,6 +356,7 @@ footer a:hover{text-decoration:underline}
   .header-tag{font-size:10px;padding:7px 10px}
   h1{font-size:26px}
   .brand h2{font-size:18px}
+  .logo{width:54px;height:54px;border-radius:14px}
   .output .value{font-size:15px}
   .stat strong{font-size:22px}
 }
@@ -335,7 +372,9 @@ footer a:hover{text-decoration:underline}
 <!-- ============ HEADER ============ -->
 <header>
   <div class="brand">
-    <div class="logo">✳</div>
+    <div class="logo">
+      <img src="https://i.ibb.co.com/B2QjNBJc/Glossy-Pastel-Cloud-Mascot.png" alt="NameForge Logo">
+    </div>
     <div>
       <h2>NameForge <span style="color:var(--primary);font-weight:800">Pro</span></h2>
       <p>Smart Identity Generator</p>
@@ -500,22 +539,16 @@ footer a:hover{text-decoration:underline}
 <script>
 /* ============================================================
    ENHANCED 3D BUBBLE ORBS BACKGROUND
-   - 3 depth layers (far / mid / near)
-   - 45+ bubbles on desktop, 18 on mobile
-   - Chromatic rim glow + sparkle highlights + inner refraction
-   - Pulsing ripple waves on large bubbles
-   - Mouse parallax with smooth follow
-   - Connecting light filaments between near bubbles
    ============================================================ */
 (function init3D(){
   const canvas = document.getElementById('bg3d');
   const ctx = canvas.getContext('2d', { alpha: true });
   let W, H, dpr;
 
-  const bubbles = [];      // main glowing bubbles
-  const sparks = [];       // tiny sparkle dots
-  const filaments = [];    // pre-computed near-bubble pairs
-  const mouse = { x: 0.5, y: 0.5, cx: 0.5, cy: 0.5, vx: 0, vy: 0 };
+  const bubbles = [];
+  const sparks = [];
+  const filaments = [];
+  const mouse = { x: 0.5, y: 0.5, cx: 0.5, cy: 0.5 };
 
   function resize(){
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -529,17 +562,15 @@ footer a:hover{text-decoration:underline}
   function build(){
     const isMobile = innerWidth < 700;
 
-    /* ===== BUBBLES — 3 depth layers ===== */
     bubbles.length = 0;
     const totalBubbles = isMobile ? 22 : 52;
 
     for(let i = 0; i < totalBubbles; i++){
-      // depth distribution: 40% far, 40% mid, 20% near
       const rnd = Math.random();
       let z;
-      if(rnd < 0.40)      z = 0.15 + Math.random() * 0.20;   // far
-      else if(rnd < 0.80) z = 0.40 + Math.random() * 0.25;   // mid
-      else                z = 0.70 + Math.random() * 0.30;   // near
+      if(rnd < 0.40)      z = 0.15 + Math.random() * 0.20;
+      else if(rnd < 0.80) z = 0.40 + Math.random() * 0.25;
+      else                z = 0.70 + Math.random() * 0.30;
 
       const baseR = (Math.random() * 80 + 40) * z * dpr;
 
@@ -550,22 +581,19 @@ footer a:hover{text-decoration:underline}
         r: baseR,
         vx: (Math.random() - 0.5) * (0.35 + z * 0.6) * dpr * 0.6,
         vy: (Math.random() - 0.5) * (0.35 + z * 0.6) * dpr * 0.6,
-        hue: 190 + Math.random() * 70,     // 190-260: cyan → blue → purple
+        hue: 190 + Math.random() * 70,
         alpha: 0.08 + z * 0.22,
         phase: Math.random() * Math.PI * 2,
         wob: 0.0015 + Math.random() * 0.004,
         wobAmp: (6 + Math.random() * 14) * z * dpr,
-        // sparkle rotation
         sparkRot: Math.random() * Math.PI * 2,
         sparkSpeed: (Math.random() - 0.5) * 0.006,
-        // ripple
         ripplePhase: Math.random() * Math.PI * 2,
         rippleSpeed: 0.008 + Math.random() * 0.012,
         hasRipple: z > 0.5 && Math.random() < 0.6
       });
     }
 
-    /* ===== SPARKLES — tiny floating dots ===== */
     sparks.length = 0;
     const sparkCount = isMobile ? 90 : 220;
     for(let i = 0; i < sparkCount; i++){
@@ -583,9 +611,7 @@ footer a:hover{text-decoration:underline}
       });
     }
 
-    /* ===== FILAMENTS — precompute near-bubble connections ===== */
     filaments.length = 0;
-    // Only connect near bubbles (z > 0.55) with distance < threshold
     const near = bubbles.filter(b => b.z > 0.55);
     const threshold = 260 * dpr;
     for(let i = 0; i < near.length; i++){
@@ -599,16 +625,15 @@ footer a:hover{text-decoration:underline}
     }
   }
 
-  function draw(t){
+  function draw(){
     ctx.clearRect(0, 0, W, H);
 
-    // smooth mouse follow
     mouse.cx += (mouse.x - mouse.cx) * 0.05;
     mouse.cy += (mouse.y - mouse.cy) * 0.05;
     const px = (mouse.cx - 0.5) * 60 * dpr;
     const py = (mouse.cy - 0.5) * 60 * dpr;
 
-    /* ===== 1. FILAMENTS (behind everything) ===== */
+    /* ===== FILAMENTS ===== */
     ctx.lineCap = 'round';
     filaments.forEach(f => {
       const ax = f.a.x - px * f.a.z;
@@ -632,31 +657,25 @@ footer a:hover{text-decoration:underline}
       ctx.stroke();
     });
 
-    /* ===== 2. BUBBLES ===== */
+    /* ===== BUBBLES ===== */
     bubbles.forEach(b => {
-      // physics
       b.x += b.vx;
       b.y += b.vy;
       b.phase += b.wob;
       b.sparkRot += b.sparkSpeed;
       b.ripplePhase += b.rippleSpeed;
 
-      // gentle boundary wrap with soft margin
       const margin = b.r * 1.8 + 60 * dpr;
       if(b.x < -margin) b.x = W + margin;
       if(b.x > W + margin) b.x = -margin;
       if(b.y < -margin) b.y = H + margin;
       if(b.y > H + margin) b.y = -margin;
 
-      // wobble position
       const wx = Math.sin(b.phase) * b.wobAmp;
       const wy = Math.cos(b.phase * 1.35) * b.wobAmp;
-
-      // parallax offset by depth
       const cx = b.x + wx - px * b.z;
       const cy = b.y + wy - py * b.z;
 
-      // ===== outer soft glow =====
       const glowR = b.r * (1.7 + Math.sin(b.phase * 0.7) * 0.06);
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
       glow.addColorStop(0,    `hsla(${b.hue}, 100%, 78%, ${b.alpha * 1.1})`);
@@ -668,22 +687,18 @@ footer a:hover{text-decoration:underline}
       ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
       ctx.fill();
 
-      // ===== chromatic rim (dual-color ring) =====
-      // rim 1 (main)
       ctx.strokeStyle = `hsla(${b.hue}, 100%, 82%, ${b.alpha * 1.8})`;
       ctx.lineWidth = 1.4 * dpr;
       ctx.beginPath();
       ctx.arc(cx, cy, b.r, 0, Math.PI * 2);
       ctx.stroke();
 
-      // rim 2 (offset complementary for chromatic shift)
       ctx.strokeStyle = `hsla(${b.hue + 45}, 100%, 75%, ${b.alpha * 0.8})`;
       ctx.lineWidth = 0.8 * dpr;
       ctx.beginPath();
       ctx.arc(cx + 1.2 * dpr, cy + 1.2 * dpr, b.r * 0.98, 0, Math.PI * 2);
       ctx.stroke();
 
-      // ===== inner refraction ring =====
       const innerGrad = ctx.createRadialGradient(
         cx - b.r * 0.3, cy - b.r * 0.3, 0,
         cx - b.r * 0.3, cy - b.r * 0.3, b.r * 0.85
@@ -696,7 +711,6 @@ footer a:hover{text-decoration:underline}
       ctx.arc(cx, cy, b.r * 0.85, 0, Math.PI * 2);
       ctx.fill();
 
-      // ===== top-left glass highlight =====
       const hlR = b.r * 0.45;
       const hlx = cx - b.r * 0.42;
       const hly = cy - b.r * 0.42;
@@ -709,7 +723,6 @@ footer a:hover{text-decoration:underline}
       ctx.arc(hlx, hly, hlR, 0, Math.PI * 2);
       ctx.fill();
 
-      // ===== small secondary sparkle (bottom-right) =====
       const sr2 = b.r * 0.18;
       const s2x = cx + b.r * 0.42;
       const s2y = cy + b.r * 0.38;
@@ -721,7 +734,6 @@ footer a:hover{text-decoration:underline}
       ctx.arc(s2x, s2y, sr2, 0, Math.PI * 2);
       ctx.fill();
 
-      // ===== ripple wave (only on large near bubbles) =====
       if(b.hasRipple){
         const ripR = b.r * (1.15 + (Math.sin(b.ripplePhase) * 0.5 + 0.5) * 0.5);
         const ripA = (1 - ((Math.sin(b.ripplePhase) * 0.5 + 0.5))) * b.alpha * 0.7;
@@ -733,19 +745,17 @@ footer a:hover{text-decoration:underline}
       }
     });
 
-    /* ===== 3. SPARKLES ===== */
+    /* ===== SPARKLES ===== */
     sparks.forEach(s => {
       s.x += s.vx * s.z * dpr;
       s.y += s.vy * s.z * dpr;
       s.twinkle += s.twinkleSpeed;
 
-      // subtle mouse influence
       const dxm = (mouse.cx * W - s.x) * 0.00015;
       const dym = (mouse.cy * H - s.y) * 0.00015;
       s.vx += dxm; s.vy += dym;
       s.vx *= 0.996; s.vy *= 0.996;
 
-      // wrap
       if(s.x < 0) s.x = W; if(s.x > W) s.x = 0;
       if(s.y < 0) s.y = H; if(s.y > H) s.y = 0;
 
@@ -756,7 +766,6 @@ footer a:hover{text-decoration:underline}
       const alpha = (0.35 + twinkle * 0.55) * s.z;
       const r = s.r * (0.7 + twinkle * 0.7);
 
-      // glow
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 5);
       g.addColorStop(0, `hsla(${s.hue}, 100%, 88%, ${alpha})`);
       g.addColorStop(0.5, `hsla(${s.hue}, 100%, 78%, ${alpha * 0.4})`);
@@ -766,7 +775,6 @@ footer a:hover{text-decoration:underline}
       ctx.arc(cx, cy, r * 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // core dot
       ctx.fillStyle = `hsla(${s.hue}, 100%, 92%, ${alpha})`;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -776,7 +784,6 @@ footer a:hover{text-decoration:underline}
     requestAnimationFrame(draw);
   }
 
-  // ===== Mouse / Touch tracking =====
   addEventListener('mousemove', e => {
     mouse.x = e.clientX / innerWidth;
     mouse.y = e.clientY / innerHeight;
@@ -795,7 +802,7 @@ footer a:hover{text-decoration:underline}
 })();
 
 /* ============================================================
-   COUNTRY DATA — real names per region
+   COUNTRY DATA
    ============================================================ */
 const pools = {
   US:{f:'James John Michael David Robert William Daniel Matthew Joseph Andrew Christopher Joshua Ryan Nicholas Tyler Emily Olivia Emma Sophia Ava Mia Isabella Charlotte Amelia Harper Evelyn'.split(' '),l:'Smith Johnson Williams Brown Jones Miller Davis Wilson Anderson Taylor Moore Jackson Martin Lee Thompson White Harris Clark Lewis Walker Hall Young King Wright Scott Green Baker Adams'.split(' ')},
@@ -832,9 +839,6 @@ const defaultPool = {
   l:'Morgan Parker Reed Bailey Cooper Brooks Bennett Collins Foster Hayes Sutton Blake'.split(' ')
 };
 
-/* ============================================================
-   COUNTRY SELECT
-   ============================================================ */
 const regionCodes = `
 US GB CA AU NZ IE DE FR ES IT PT NL BE CH AT SE NO DK FI IS PL CZ SK HU RO BG
 GR TR UA RU GE AM AZ KZ UZ IN BD PK LK NP BT MV CN JP KR TW HK SG MY ID TH VN
@@ -864,9 +868,6 @@ countries.forEach(c => {
 });
 countrySelect.value = 'US';
 
-/* ============================================================
-   HELPERS
-   ============================================================ */
 const $ = id => document.getElementById(id);
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
@@ -942,9 +943,6 @@ function toggleCookie(){
   $('cookieField').style.display = $('useCookie').checked ? 'block' : 'none';
 }
 
-/* ============================================================
-   RECORDS
-   ============================================================ */
 let records = [];
 try {
   const saved = localStorage.getItem('nameforge_pro_records');
