@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NameForge Pro — Identity Generator</title>
+<style>
+:root {
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#7b8498;
+  --primary:#635bff;
+  --primary-dark:#4f47e0;
+  --border:#e7eaf1;
+  --green:#16a36a;
+  --green-bg:#e4f8ed;
+  --red:#e5484d;
+  --red-bg:#fff0f0;
+  --warn:#f59e0b;
+  --shadow:0 5px 25px #1b27500a;
+  --shadow-lg:0 12px 40px #1b275015;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+  background-image: url('https://i.ibb.co.com/Gfbwyk3b/Minimal-Blue-Bubble-Orbs.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+#bg3d {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(245, 247, 251, 0.55);
+  z-index: 1;
+  pointer-events: none;
+}
+.app {
+  position: relative;
+  z-index: 2;
+  max-width:1280px;margin:auto;padding:28px 22px;
+}
+button,input,select,textarea{font:inherit;font-family:inherit}
+button{cursor:pointer;border:0}
+
+/* ===== HEADER ===== */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin-bottom:32px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:46px;height:46px;border-radius:14px;
+  display:grid;place-items:center;color:white;font-size:24px;
+  background:linear-gradient(135deg,#827aff,#5547e8);
+  box-shadow:0 8px 20px #635bff35;
+  animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 8px 20px #635bff35}
+  50%{box-shadow:0 8px 30px #635bff55}
+}
+.brand h2{margin:0;font-size:21px;letter-spacing:-.6px}
+.brand p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.header-tag{
+  font-size:12px;color:var(--green);background:var(--green-bg);
+  padding:9px 14px;border-radius:20px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.header-tag::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--green);animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ===== HERO ===== */
+.hero{margin-bottom:26px}
+.eyebrow{
+  color:var(--primary);font-size:12px;font-weight:800;
+  letter-spacing:1.7px;text-transform:uppercase;
+}
+h1{
+  font-size:clamp(28px,4vw,42px);letter-spacing:-1.7px;
+  margin:10px 0;line-height:1.1;
+}
+.hero p{color:var(--muted);line-height:1.7;margin:0;max-width:680px;font-size:15px}
+
+/* ===== LAYOUT ===== */
+.layout{
+  display:grid;grid-template-columns:minmax(0,1fr) 360px;
+  gap:22px;align-items:start;
+}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:19px;padding:24px;box-shadow:var(--shadow);
+  transition:box-shadow .2s;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-head{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-bottom:22px;
+}
+.card-head h3{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}
+.muted{color:var(--muted);font-size:12px}
+
+/* ===== FORM ===== */
+.field{margin-bottom:19px}
+label{
+  display:block;font-size:12px;font-weight:700;
+  margin-bottom:9px;color:#465069;letter-spacing:.3px;
+}
+input,select,textarea{
+  width:100%;border:1px solid var(--border);border-radius:10px;
+  background:#fff;color:var(--text);padding:12px 13px;outline:none;
+  transition:border .2s,box-shadow .2s;
+  font-size:14px;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px #635bff18;
+}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+
+/* ===== OUTPUT CARDS ===== */
+.name-output{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.output{
+  border:1px solid var(--border);border-radius:12px;padding:14px;
+  min-width:0;background:#fafbff;transition:.2s;
+  position:relative;overflow:hidden;
+}
+.output::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--primary),#a78bfa);
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+}
+.output:hover::before{transform:scaleX(1)}
+.output .caption{font-size:11px;color:var(--muted);margin-bottom:9px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.output .value{
+  font-size:17px;font-weight:750;overflow-wrap:anywhere;
+  line-height:1.3;letter-spacing:-.3px;
+}
+.output-top{display:flex;justify-content:space-between;align-items:center;gap:5px}
+.mini{
+  border:0;background:transparent;color:var(--primary);
+  padding:3px 6px;font-size:12px;font-weight:600;border-radius:6px;
+  transition:.15s;
+}
+.mini:hover{background:#efeeff}
+
+/* ===== PASSWORD ===== */
+.password-row{display:flex;gap:8px}
+.password-row input{flex:1;min-width:0;font-family:ui-monospace,monospace;letter-spacing:.4px}
+.icon-btn{
+  min-width:44px;padding:12px;border-radius:10px;
+  display:grid;place-items:center;font-size:16px;
+  transition:.15s;
+}
+.icon-btn:hover{transform:rotate(15deg)}
+.strength-bar{
+  height:5px;background:#eef1f6;border-radius:3px;
+  overflow:hidden;margin-top:9px;
+}
+.strength-fill{
+  height:100%;width:0;border-radius:3px;
+  transition:width .4s,background .3s;
+}
+.strength-label{
+  font-size:11px;color:var(--muted);margin-top:6px;
+  display:flex;justify-content:space-between;
+}
+.checkrow{
+  display:flex;align-items:center;gap:9px;margin-top:8px;
+  font-size:12px;color:var(--muted);cursor:pointer;
+}
+.checkrow input{width:auto;cursor:pointer;accent-color:var(--primary)}
+.checkrow:hover{color:var(--text)}
+
+/* ===== BUTTONS ===== */
+.btn{
+  border:0;border-radius:10px;padding:12px 16px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .15s,opacity .15s,background .15s;
+  font-size:13px;
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:var(--primary);color:white}
+.primary:hover:not(:disabled){background:var(--primary-dark)}
+.secondary{background:#efeeff;color:var(--primary)}
+.secondary:hover{background:#e4e2ff}
+.outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.outline:hover{background:#f8f9fc;border-color:#d8dce5}
+.danger{background:var(--red-bg);color:var(--red)}
+.danger:hover{background:#ffe0e0}
+.full{width:100%}
+.actions{display:flex;gap:10px;margin-top:20px}
+.actions .btn{flex:1}
+.divider{height:1px;background:var(--border);margin:23px 0}
+
+/* ===== SIDEBAR ===== */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.stat{
+  background:#f8f8ff;border:1px solid #eeedff;border-radius:12px;
+  padding:15px;position:relative;overflow:hidden;
+}
+.stat strong{font-size:26px;display:block;letter-spacing:-1px;color:var(--primary)}
+.stat span{font-size:11px;color:var(--muted);font-weight:500}
+.side-title{font-size:15px;font-weight:800;margin:0 0 5px;letter-spacing:-.3px}
+.side-desc{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 16px}
+
+/* ===== SAVED LIST ===== */
+.saved-list{display:grid;gap:10px;max-height:480px;overflow-y:auto;padding-right:4px}
+.saved-list::-webkit-scrollbar{width:6px}
+.saved-list::-webkit-scrollbar-track{background:transparent}
+.saved-list::-webkit-scrollbar-thumb{background:#d8dce5;border-radius:3px}
+.saved-list::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+.saved-item{
+  border:1px solid var(--border);border-radius:12px;padding:13px;
+  transition:.2s;background:#fff;
+}
+.saved-item:hover{border-color:#d8dce5;box-shadow:0 4px 15px #1b275010}
+.saved-top{display:flex;justify-content:space-between;gap:8px;align-items:start}
+.saved-name{font-weight:750;font-size:13px;overflow-wrap:anywhere}
+.saved-country{
+  font-size:10px;font-weight:700;color:var(--primary);
+  background:#efeeff;padding:3px 8px;border-radius:6px;
+  white-space:nowrap;
+}
+.saved-meta{
+  font-size:11px;color:var(--muted);margin-top:7px;
+  overflow-wrap:anywhere;line-height:1.6;
+}
+.saved-actions{display:flex;gap:6px;margin-top:10px}
+.saved-actions button{flex:1;font-size:11px;padding:7px 5px;border-radius:8px}
+
+/* ===== TOOLBAR (search/sort) ===== */
+.toolbar{
+  display:flex;gap:8px;margin-bottom:14px;
+}
+.toolbar input{
+  flex:1;padding:9px 12px;font-size:12px;
+  background:#fafbff;
+}
+.toolbar select{
+  padding:9px 10px;font-size:12px;width:auto;
+  background:#fafbff;cursor:pointer;
+}
+
+/* ===== EMPTY ===== */
+.empty{
+  text-align:center;padding:32px 16px;color:var(--muted);
+  font-size:12.5px;line-height:1.9;
+}
+.empty-icon{
+  font-size:32px;opacity:.35;margin-bottom:8px;display:block;
+}
+
+/* ===== EXPORT ===== */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.export-grid button{padding:11px 5px;font-size:12px;font-weight:700}
+.note{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;color:var(--muted);font-size:11px;
+  margin:30px 0 4px;line-height:1.9;
+  position:relative;z-index:2;
+}
+footer a{color:var(--primary);text-decoration:none;font-weight:600}
+footer a:hover{text-decoration:underline}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translate(-50%,20px);
+  background:#172033;color:white;
+  padding:13px 20px;border-radius:12px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;transition:.3s cubic-bezier(.34,1.56,.64,1);
+  z-index:9999;max-width:90%;text-align:center;
+  box-shadow:0 12px 30px #00000030;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.success{background:linear-gradient(135deg,#16a36a,#0e8555)}
+.toast.error{background:linear-gradient(135deg,#e5484d,#c93a3f)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{order:2}
+}
+@media(max-width:560px){
+  .app{padding:16px 12px}
+  header{margin-bottom:22px}
+  .card{padding:18px}
+  .row{grid-template-columns:1fr}
+  .actions{flex-direction:column}
+  .name-output{grid-template-columns:1fr}
+  .header-tag{font-size:10px;padding:7px 10px}
+  h1{font-size:26px}
+  .brand h2{font-size:18px}
+  .output .value{font-size:15px}
+  .stat strong{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- 3D Animated Background Canvas -->
+<canvas id="bg3d"></canvas>
+
+<div class="app">
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="brand">
+    <div class="logo">✳</div>
+    <div>
+      <h2>NameForge <span style="color:var(--primary);font-weight:800">Pro</span></h2>
+      <p>Smart Identity Generator</p>
+    </div>
+  </div>
+  <span class="header-tag">Local &amp; Private</span>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="eyebrow">CREATE · ORGANIZE · EXPORT</div>
+  <h1>Generate realistic identities instantly</h1>
+  <p>Pick a country, generate authentic names + strong passwords, save records with optional cookie strings, and export everything as TXT, CSV, or JSON — all in your browser.</p>
+</section>
+
+<!-- ============ LAYOUT ============ -->
+<div class="layout">
+
+<!-- ============ MAIN PANEL ============ -->
+<main class="card">
+  <div class="card-head">
+    <h3>✦ Generate a new identity</h3>
+    <span class="muted">01 / Generator</span>
+  </div>
+
+  <div class="field">
+    <label for="country">🌍 COUNTRY / REGION</label>
+    <select id="country"></select>
+  </div>
+
+  <div class="name-output">
+    <div class="output">
+      <div class="output-top">
+        <span class="caption">First name</span>
+        <button class="mini" onclick="copyValue('first')">Copy</button>
+      </div>
+      <div class="value" id="first">James</div>
+    </div>
+    <div class="output">
+      <div class="output-top">
+        <span class="caption">Last name</span>
+        <button class="mini" onclick="copyValue('last')">Copy</button>
+      </div>
+      <div class="value" id="last">Smith</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field">
+    <label for="password">🔐 GENERATED PASSWORD</label>
+    <div class="password-row">
+      <input id="password" type="text" readonly>
+      <button class="btn secondary icon-btn" onclick="generatePassword()" title="New password">↻</button>
+      <button class="btn outline" onclick="copyValue('password')">Copy</button>
+    </div>
+    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+    <div class="strength-label">
+      <span id="strengthText">Strength: —</span>
+      <span id="strengthLen">0 chars</span>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div>
+        <label for="passLength">Password length</label>
+        <select id="passLength">
+          <option value="12">12 characters</option>
+          <option value="16" selected>16 characters</option>
+          <option value="20">20 characters</option>
+          <option value="24">24 characters</option>
+          <option value="32">32 characters</option>
+        </select>
+      </div>
+      <div>
+        <label>Options</label>
+        <label class="checkrow"><input id="symbols" type="checkbox" checked> Include symbols</label>
+        <label class="checkrow"><input id="numbers" type="checkbox" checked> Include numbers</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn primary" onclick="generateAll()">↻ Generate New</button>
+    <button class="btn secondary" onclick="openSave()">＋ Save Record</button>
+  </div>
+
+  <!-- ============ SAVE PANEL ============ -->
+  <div id="savePanel" hidden>
+    <div class="divider"></div>
+    <div class="card-head">
+      <h3>💾 Save this record</h3>
+      <button class="mini" onclick="closeSave()">✕ Close</button>
+    </div>
+    <div class="field">
+      <label for="contact">📧 EMAIL OR 📱 PHONE (OPTIONAL)</label>
+      <input id="contact" type="text" placeholder="name@example.com or +1 555 123 4567">
+    </div>
+    <label class="checkrow" style="margin-bottom:14px">
+      <input id="useCookie" type="checkbox" onchange="toggleCookie()">
+      🍪 Add optional cookie text
+    </label>
+    <div class="field" id="cookieField" style="display:none">
+      <label for="cookie">COOKIE STRING (OPTIONAL)</label>
+      <textarea id="cookie" rows="2" placeholder="e.g. datr=abc123; sb=xyz789; ..." style="font-family:ui-monospace,monospace;font-size:12px"></textarea>
+    </div>
+    <div class="field">
+      <label for="notes">📝 NOTES (OPTIONAL)</label>
+      <textarea id="notes" rows="2" placeholder="Add a label or reminder..."></textarea>
+    </div>
+    <button class="btn primary full" onclick="saveRecord()">✓ Confirm &amp; Save</button>
+    <p class="note">⚠ Records are stored locally in this browser. Avoid saving real account passwords or sensitive personal data.</p>
+  </div>
+</main>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar">
+  <section class="card">
+    <div class="card-head">
+      <h3>📋 Saved records</h3>
+      <span class="muted">02 / Library</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><strong id="total">0</strong><span>Total records</span></div>
+      <div class="stat"><strong id="today">0</strong><span>Saved today</span></div>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="🔍 Search..." oninput="renderRecords()">
+      <select id="sortBy" onchange="renderRecords()">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="name">Name A-Z</option>
+      </select>
+    </div>
+
+    <div id="savedList" class="saved-list"></div>
+
+    <div class="divider"></div>
+    <p class="side-title">📤 Export records</p>
+    <p class="side-desc">Download your collection in your preferred format.</p>
+    <div class="export-grid">
+      <button class="btn outline" onclick="exportData('txt')">TXT</button>
+      <button class="btn outline" onclick="exportData('csv')">CSV</button>
+      <button class="btn outline" onclick="exportData('json')">JSON</button>
+    </div>
+    <p class="note">Exported files may contain sensitive information. Keep them secure.</p>
+    <button class="btn danger full" style="margin-top:12px" onclick="clearRecords()">🗑 Delete all records</button>
+  </section>
+</aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <strong>NameForge Pro</strong> · Personal identity-generation utility<br>
+  Not affiliated with or endorsed by Facebook or Meta.
+</footer>
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+/* ============================================================
+   ENHANCED 3D BUBBLE ORBS BACKGROUND
+   - 3 depth layers (far / mid / near)
+   - 45+ bubbles on desktop, 18 on mobile
+   - Chromatic rim glow + sparkle highlights + inner refraction
+   - Pulsing ripple waves on large bubbles
+   - Mouse parallax with smooth follow
+   - Connecting light filaments between near bubbles
+   ============================================================ */
+(function init3D(){
+  const canvas = document.getElementById('bg3d');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let W, H, dpr;
+
+  const bubbles = [];      // main glowing bubbles
+  const sparks = [];       // tiny sparkle dots
+  const filaments = [];    // pre-computed near-bubble pairs
+  const mouse = { x: 0.5, y: 0.5, cx: 0.5, cy: 0.5, vx: 0, vy: 0 };
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.width  = innerWidth  * dpr;
+    H = canvas.height = innerHeight * dpr;
+    canvas.style.width  = innerWidth  + 'px';
+    canvas.style.height = innerHeight + 'px';
+    build();
+  }
+
+  function build(){
+    const isMobile = innerWidth < 700;
+
+    /* ===== BUBBLES — 3 depth layers ===== */
+    bubbles.length = 0;
+    const totalBubbles = isMobile ? 22 : 52;
+
+    for(let i = 0; i < totalBubbles; i++){
+      // depth distribution: 40% far, 40% mid, 20% near
+      const rnd = Math.random();
+      let z;
+      if(rnd < 0.40)      z = 0.15 + Math.random() * 0.20;   // far
+      else if(rnd < 0.80) z = 0.40 + Math.random() * 0.25;   // mid
+      else                z = 0.70 + Math.random() * 0.30;   // near
+
+      const baseR = (Math.random() * 80 + 40) * z * dpr;
+
+      bubbles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        z,
+        r: baseR,
+        vx: (Math.random() - 0.5) * (0.35 + z * 0.6) * dpr * 0.6,
+        vy: (Math.random() - 0.5) * (0.35 + z * 0.6) * dpr * 0.6,
+        hue: 190 + Math.random() * 70,     // 190-260: cyan → blue → purple
+        alpha: 0.08 + z * 0.22,
+        phase: Math.random() * Math.PI * 2,
+        wob: 0.0015 + Math.random() * 0.004,
+        wobAmp: (6 + Math.random() * 14) * z * dpr,
+        // sparkle rotation
+        sparkRot: Math.random() * Math.PI * 2,
+        sparkSpeed: (Math.random() - 0.5) * 0.006,
+        // ripple
+        ripplePhase: Math.random() * Math.PI * 2,
+        rippleSpeed: 0.008 + Math.random() * 0.012,
+        hasRipple: z > 0.5 && Math.random() < 0.6
+      });
+    }
+
+    /* ===== SPARKLES — tiny floating dots ===== */
+    sparks.length = 0;
+    const sparkCount = isMobile ? 90 : 220;
+    for(let i = 0; i < sparkCount; i++){
+      const z = Math.random() * 0.9 + 0.1;
+      sparks.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        z,
+        r: (Math.random() * 1.8 + 0.4) * dpr,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        hue: 190 + Math.random() * 80,
+        twinkle: Math.random() * Math.PI * 2,
+        twinkleSpeed: 0.02 + Math.random() * 0.04
+      });
+    }
+
+    /* ===== FILAMENTS — precompute near-bubble connections ===== */
+    filaments.length = 0;
+    // Only connect near bubbles (z > 0.55) with distance < threshold
+    const near = bubbles.filter(b => b.z > 0.55);
+    const threshold = 260 * dpr;
+    for(let i = 0; i < near.length; i++){
+      for(let j = i + 1; j < near.length; j++){
+        const dx = near[i].x - near[j].x;
+        const dy = near[i].y - near[j].y;
+        if(dx*dx + dy*dy < threshold * threshold){
+          filaments.push({ a: near[i], b: near[j] });
+        }
+      }
+    }
+  }
+
+  function draw(t){
+    ctx.clearRect(0, 0, W, H);
+
+    // smooth mouse follow
+    mouse.cx += (mouse.x - mouse.cx) * 0.05;
+    mouse.cy += (mouse.y - mouse.cy) * 0.05;
+    const px = (mouse.cx - 0.5) * 60 * dpr;
+    const py = (mouse.cy - 0.5) * 60 * dpr;
+
+    /* ===== 1. FILAMENTS (behind everything) ===== */
+    ctx.lineCap = 'round';
+    filaments.forEach(f => {
+      const ax = f.a.x - px * f.a.z;
+      const ay = f.a.y - py * f.a.z;
+      const bx = f.b.x - px * f.b.z;
+      const by = f.b.y - py * f.b.z;
+      const dx = ax - bx, dy = ay - by;
+      const d = Math.hypot(dx, dy);
+      const maxD = 260 * dpr;
+      if(d > maxD) return;
+      const a = (1 - d / maxD) * 0.22;
+      const grad = ctx.createLinearGradient(ax, ay, bx, by);
+      grad.addColorStop(0, `hsla(${f.a.hue}, 100%, 75%, ${a})`);
+      grad.addColorStop(0.5, `hsla(220, 100%, 82%, ${a * 1.2})`);
+      grad.addColorStop(1, `hsla(${f.b.hue}, 100%, 75%, ${a})`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.9 * dpr;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+    });
+
+    /* ===== 2. BUBBLES ===== */
+    bubbles.forEach(b => {
+      // physics
+      b.x += b.vx;
+      b.y += b.vy;
+      b.phase += b.wob;
+      b.sparkRot += b.sparkSpeed;
+      b.ripplePhase += b.rippleSpeed;
+
+      // gentle boundary wrap with soft margin
+      const margin = b.r * 1.8 + 60 * dpr;
+      if(b.x < -margin) b.x = W + margin;
+      if(b.x > W + margin) b.x = -margin;
+      if(b.y < -margin) b.y = H + margin;
+      if(b.y > H + margin) b.y = -margin;
+
+      // wobble position
+      const wx = Math.sin(b.phase) * b.wobAmp;
+      const wy = Math.cos(b.phase * 1.35) * b.wobAmp;
+
+      // parallax offset by depth
+      const cx = b.x + wx - px * b.z;
+      const cy = b.y + wy - py * b.z;
+
+      // ===== outer soft glow =====
+      const glowR = b.r * (1.7 + Math.sin(b.phase * 0.7) * 0.06);
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+      glow.addColorStop(0,    `hsla(${b.hue}, 100%, 78%, ${b.alpha * 1.1})`);
+      glow.addColorStop(0.35, `hsla(${b.hue}, 95%, 70%, ${b.alpha * 0.65})`);
+      glow.addColorStop(0.75, `hsla(${b.hue}, 90%, 65%, ${b.alpha * 0.15})`);
+      glow.addColorStop(1,    `hsla(${b.hue}, 90%, 65%, 0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ===== chromatic rim (dual-color ring) =====
+      // rim 1 (main)
+      ctx.strokeStyle = `hsla(${b.hue}, 100%, 82%, ${b.alpha * 1.8})`;
+      ctx.lineWidth = 1.4 * dpr;
+      ctx.beginPath();
+      ctx.arc(cx, cy, b.r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // rim 2 (offset complementary for chromatic shift)
+      ctx.strokeStyle = `hsla(${b.hue + 45}, 100%, 75%, ${b.alpha * 0.8})`;
+      ctx.lineWidth = 0.8 * dpr;
+      ctx.beginPath();
+      ctx.arc(cx + 1.2 * dpr, cy + 1.2 * dpr, b.r * 0.98, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // ===== inner refraction ring =====
+      const innerGrad = ctx.createRadialGradient(
+        cx - b.r * 0.3, cy - b.r * 0.3, 0,
+        cx - b.r * 0.3, cy - b.r * 0.3, b.r * 0.85
+      );
+      innerGrad.addColorStop(0, `hsla(${b.hue}, 100%, 90%, ${b.alpha * 0.7})`);
+      innerGrad.addColorStop(0.6, `hsla(${b.hue + 20}, 100%, 80%, ${b.alpha * 0.2})`);
+      innerGrad.addColorStop(1, `hsla(${b.hue}, 100%, 80%, 0)`);
+      ctx.fillStyle = innerGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, b.r * 0.85, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ===== top-left glass highlight =====
+      const hlR = b.r * 0.45;
+      const hlx = cx - b.r * 0.42;
+      const hly = cy - b.r * 0.42;
+      const hlGrad = ctx.createRadialGradient(hlx, hly, 0, hlx, hly, hlR);
+      hlGrad.addColorStop(0, `hsla(0, 0%, 100%, ${Math.min(0.95, b.alpha * 2.5)})`);
+      hlGrad.addColorStop(0.5, `hsla(0, 0%, 100%, ${b.alpha * 0.8})`);
+      hlGrad.addColorStop(1, `hsla(0, 0%, 100%, 0)`);
+      ctx.fillStyle = hlGrad;
+      ctx.beginPath();
+      ctx.arc(hlx, hly, hlR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ===== small secondary sparkle (bottom-right) =====
+      const sr2 = b.r * 0.18;
+      const s2x = cx + b.r * 0.42;
+      const s2y = cy + b.r * 0.38;
+      const s2Grad = ctx.createRadialGradient(s2x, s2y, 0, s2x, s2y, sr2);
+      s2Grad.addColorStop(0, `hsla(0, 0%, 100%, ${b.alpha * 1.6})`);
+      s2Grad.addColorStop(1, `hsla(0, 0%, 100%, 0)`);
+      ctx.fillStyle = s2Grad;
+      ctx.beginPath();
+      ctx.arc(s2x, s2y, sr2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ===== ripple wave (only on large near bubbles) =====
+      if(b.hasRipple){
+        const ripR = b.r * (1.15 + (Math.sin(b.ripplePhase) * 0.5 + 0.5) * 0.5);
+        const ripA = (1 - ((Math.sin(b.ripplePhase) * 0.5 + 0.5))) * b.alpha * 0.7;
+        ctx.strokeStyle = `hsla(${b.hue}, 100%, 85%, ${ripA})`;
+        ctx.lineWidth = 1 * dpr;
+        ctx.beginPath();
+        ctx.arc(cx, cy, ripR, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+
+    /* ===== 3. SPARKLES ===== */
+    sparks.forEach(s => {
+      s.x += s.vx * s.z * dpr;
+      s.y += s.vy * s.z * dpr;
+      s.twinkle += s.twinkleSpeed;
+
+      // subtle mouse influence
+      const dxm = (mouse.cx * W - s.x) * 0.00015;
+      const dym = (mouse.cy * H - s.y) * 0.00015;
+      s.vx += dxm; s.vy += dym;
+      s.vx *= 0.996; s.vy *= 0.996;
+
+      // wrap
+      if(s.x < 0) s.x = W; if(s.x > W) s.x = 0;
+      if(s.y < 0) s.y = H; if(s.y > H) s.y = 0;
+
+      const cx = s.x - px * s.z;
+      const cy = s.y - py * s.z;
+
+      const twinkle = 0.5 + Math.sin(s.twinkle) * 0.5;
+      const alpha = (0.35 + twinkle * 0.55) * s.z;
+      const r = s.r * (0.7 + twinkle * 0.7);
+
+      // glow
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 5);
+      g.addColorStop(0, `hsla(${s.hue}, 100%, 88%, ${alpha})`);
+      g.addColorStop(0.5, `hsla(${s.hue}, 100%, 78%, ${alpha * 0.4})`);
+      g.addColorStop(1, `hsla(${s.hue}, 100%, 78%, 0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // core dot
+      ctx.fillStyle = `hsla(${s.hue}, 100%, 92%, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  // ===== Mouse / Touch tracking =====
+  addEventListener('mousemove', e => {
+    mouse.x = e.clientX / innerWidth;
+    mouse.y = e.clientY / innerHeight;
+  }, { passive: true });
+
+  addEventListener('touchmove', e => {
+    if(e.touches[0]){
+      mouse.x = e.touches[0].clientX / innerWidth;
+      mouse.y = e.touches[0].clientY / innerHeight;
+    }
+  }, { passive: true });
+
+  addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+
+/* ============================================================
+   COUNTRY DATA — real names per region
+   ============================================================ */
+const pools = {
+  US:{f:'James John Michael David Robert William Daniel Matthew Joseph Andrew Christopher Joshua Ryan Nicholas Tyler Emily Olivia Emma Sophia Ava Mia Isabella Charlotte Amelia Harper Evelyn'.split(' '),l:'Smith Johnson Williams Brown Jones Miller Davis Wilson Anderson Taylor Moore Jackson Martin Lee Thompson White Harris Clark Lewis Walker Hall Young King Wright Scott Green Baker Adams'.split(' ')},
+  GB:{f:'Oliver George Harry Jack Noah Charlie Oscar William Henry Thomas James Amelia Olivia Isla Ava Lily Freya Ivy Florence Rosie Poppy'.split(' '),l:'Smith Jones Taylor Brown Williams Wilson Johnson Davies Patel Robinson Wright Thompson Evans Walker White Roberts Green Hall Wood Harris'.split(' ')},
+  CA:{f:'Liam Noah Benjamin Lucas William Oliver Ethan Jacob Logan Mason Emma Olivia Charlotte Sophia Amelia Chloe Ava Emily Abigail Ella'.split(' '),l:'Smith Brown Tremblay Martin Roy Wilson MacDonald Gagnon Johnson Lee Taylor Anderson Campbell Clark Lewis Walker Hall Young'.split(' ')},
+  AU:{f:'Oliver Noah Jack William Henry Charlie Thomas Lucas Cooper Hunter Olivia Charlotte Amelia Isla Mia Ava Grace Chloe Ruby Zoe'.split(' '),l:'Smith Jones Williams Brown Wilson Taylor Johnson White Martin Anderson Thompson Nguyen Ryan Kelly King Walker Wright Hill'.split(' ')},
+  BD:{f:'Mohammad Ahmed Arif Rahim Hasan Tanvir Sakib Nusrat Fatima Ayesha Sumaiya Sara Rakib Nayeem Fahim Imran Jubayer'.split(' '),l:'Rahman Ahmed Islam Hossain Khan Chowdhury Akter Sarker Hasan Uddin Molla Bhuiyan Talukder Mia Sheikh'.split(' ')},
+  IN:{f:'Aarav Arjun Rahul Rohan Aditya Vivaan Priya Ananya Aanya Diya Isha Neha Kavya Riya Aryan Karan Siddharth'.split(' '),l:'Sharma Patel Singh Kumar Gupta Verma Mehta Das Reddy Nair Joshi Chopra Kapoor Malhotra Bose Rao'.split(' ')},
+  PK:{f:'Muhammad Ahmed Ali Hassan Hamza Usman Ayesha Fatima Zainab Maryam Bilal Umar Salman Hira Sana Noor'.split(' '),l:'Khan Ahmed Malik Hussain Ali Shah Siddiqui Sheikh Qureshi Butt Chaudhry Raza Abbasi Hashmi'.split(' ')},
+  NG:{f:'Chinedu Emeka David Daniel Chioma Adaeze Amara Ngozi Femi Tunde Segun Ifeanyi Uche Bayo'.split(' '),l:'Okafor Adeyemi Okonkwo Bello Ibrahim Musa Obi Nwosu Eze Afolabi Balogun'.split(' ')},
+  JP:{f:'Haruto Ren Yuto Sota Yui Sakura Aoi Hina Mei Kaito Riku Yuna Himari Akari Mio'.split(' '),l:'Sato Suzuki Takahashi Tanaka Watanabe Ito Yamamoto Nakamura Kobayashi Kato Yoshida Yamada Sasaki'.split(' ')},
+  KR:{f:'Minjun Seojun Jiho Yejun Seo-yun Jiwoo Ha-eun Doyun Eunwoo Siwoo Jimin Subin Yerin'.split(' '),l:'Kim Lee Park Choi Jung Kang Cho Yoon Jang Lim Han Oh Seo Shin Kwon'.split(' ')},
+  CN:{f:'Wei Jun Hao Ming Fang Li Na Yan Jing Tao Bo Hui Ling Xia Xiu'.split(' '),l:'Wang Li Zhang Liu Chen Yang Huang Zhao Wu Zhou Xu Sun Ma Zhu Hu'.split(' ')},
+  FR:{f:'Gabriel Louis Jules Arthur Hugo Emma Jade Louise Alice Lina Lucas Nathan Léo Chloé Léa'.split(' '),l:'Martin Bernard Thomas Petit Robert Richard Durand Dubois Moreau Laurent Simon Michel Lefebvre Garcia'.split(' ')},
+  DE:{f:'Ben Paul Leon Finn Elias Jonas Mia Emma Hannah Sophia Lena Max Lukas Felix Marie Johanna'.split(' '),l:'Muller Schmidt Schneider Fischer Weber Meyer Wagner Becker Schulz Hoffmann Koch Bauer Richter Klein'.split(' ')},
+  ES:{f:'Hugo Mateo Martin Leo Lucas Sofia Lucia Martina Maria Daniel Alejandro Pablo Alba Paula'.split(' '),l:'Garcia Rodriguez Gonzalez Fernandez Lopez Martinez Sanchez Perez Gomez Martin Jimenez Ruiz Hernandez'.split(' ')},
+  BR:{f:'Miguel Arthur Heitor Gabriel Helena Alice Laura Valentina Julia Lucas Pedro Rafael Enzo'.split(' '),l:'Silva Santos Oliveira Souza Pereira Costa Rodrigues Almeida Lima Gomes Ribeiro Carvalho'.split(' ')},
+  MX:{f:'Santiago Mateo Sebastian Leonardo Sofia Valentina Regina Camila Diego Alejandro Fernando Daniel'.split(' '),l:'Hernandez Garcia Martinez Lopez Gonzalez Perez Rodriguez Sanchez Ramirez Cruz Flores'.split(' ')},
+  IT:{f:'Leonardo Alessandro Lorenzo Francesco Sofia Giulia Aurora Ginevra Matteo Riccardo Tommaso'.split(' '),l:'Rossi Russo Ferrari Esposito Bianchi Romano Colombo Ricci Marino Greco Gallo'.split(' ')},
+  TR:{f:'Yusuf Emir Kerem Arda Zeynep Elif Defne Asya Mehmet Mustafa Ahmet Ali'.split(' '),l:'Yilmaz Kaya Demir Sahin Celik Yildiz Aydin Ozdemir Arslan Dogan Kilic'.split(' ')},
+  RU:{f:'Alexander Mikhail Artyom Maxim Sofia Anna Maria Eva Dmitri Sergei Ivan Nikolai'.split(' '),l:'Ivanov Smirnov Kuznetsov Popov Sokolov Petrov Mikhailov Novikov Fedorov Volkov'.split(' ')},
+  AE:{f:'Omar Ahmed Mohammed Ali Fatima Maryam Aisha Noor Khalid Sultan Rashid'.split(' '),l:'Al-Farsi Al-Mansoori Al-Nuaimi Hassan Khalid Al-Maktoum Al-Zaabi'.split(' ')},
+  ZA:{f:'Liam Noah Sipho Thabo Lethabo Amahle Naledi Daniel David Bongani'.split(' '),l:'Dlamini Nkosi Ndlovu Khumalo Naidoo Botha Van der Merwe Mokoena Molefe'.split(' ')},
+  PH:{f:'Jose Juan Miguel Gabriel Angelo Sofia Andrea Angela Carlo Rafael Mark'.split(' '),l:'Santos Reyes Cruz Bautista Garcia Mendoza Ramos Torres Aquino Castillo'.split(' ')},
+  ID:{f:'Muhammad Aditya Rizky Dimas Putri Siti Dewi Aulia Budi Agus Andi'.split(' '),l:'Saputra Wijaya Santoso Hidayat Setiawan Pratama Kusuma Wibowo Nugroho'.split(' ')},
+  SG:{f:'Ethan Lucas Daniel Ryan Chloe Grace Emma Aiden Sean Marcus'.split(' '),l:'Tan Lim Lee Ng Wong Chen Goh Chua Koh Teo'.split(' ')},
+  NZ:{f:'Oliver Noah Jack Leo Isla Charlotte Amelia Harper Mason Liam'.split(' '),l:'Smith Wilson Williams Brown Taylor Anderson Thompson Clark Walker'.split(' ')},
+  TH:{f:'Somchai Somsak Anan Chai Decha Krit Niran Prasert Siriporn Sunisa Malee'.split(' '),l:'Saetang Srisuwan Chaiyaporn Boonmee Suwannarat Thongchai Rattanakorn Wongchai'.split(' ')},
+  VN:{f:'Minh Hung Dung Tuan Nam Long Hai Quang Son Bao Linh Huong Mai Lan'.split(' '),l:'Nguyen Tran Le Pham Hoang Huynh Phan Vu Vo Dang Bui Do'.split(' ')},
+  MY:{f:'Ahmad Muhammad Aiman Daniel Aina Nur Siti Farah Amir Danial'.split(' '),l:'bin Abdullah binti Hassan Ibrahim Rahman Ismail Yusof Tan Lim'.split(' ')},
+};
+const defaultPool = {
+  f:'Alex Jordan Taylor Morgan Casey Riley Avery Cameron Jamie Robin Sam Charlie Quinn'.split(' '),
+  l:'Morgan Parker Reed Bailey Cooper Brooks Bennett Collins Foster Hayes Sutton Blake'.split(' ')
+};
+
+/* ============================================================
+   COUNTRY SELECT
+   ============================================================ */
+const regionCodes = `
+US GB CA AU NZ IE DE FR ES IT PT NL BE CH AT SE NO DK FI IS PL CZ SK HU RO BG
+GR TR UA RU GE AM AZ KZ UZ IN BD PK LK NP BT MV CN JP KR TW HK SG MY ID TH VN
+PH KH LA MM BN TL AE SA QA KW BH OM JO LB IL IQ IR EG MA DZ TN LY ZA NG GH KE
+UG TZ RW ET SN CI CM ZW ZM BW NA MU MG
+MX BR AR CL CO PE VE EC BO PY UY CR PA GT HN SV NI DO CU JM TT BS BB
+AF AL AD AO AG AI AQ AS AW AX BZ BM BJ BI BM BQ BV BF KH KY CF TD CX CC KM
+CG CD CK HR CY DJ DM ER EE SZ FK FO FJ GF PF TF GA GM GI GD GP GU GG GN GW GY
+HT HM VA HN IM JE KI KP KG LS LR LI LT LU MO MK MW ML MT MH MQ MR FM MD MC MN
+ME MS MZ NR NC NE NF NU MP PW PS PG PN PR RE SH KN LC PM VC WS SM ST RS SC SL
+SI SB SO SS SR SJ SY TJ TG TK TO TM TC TV UM VI VU WF EH YE YT
+`.trim().split(/\s+/);
+
+const displayNames = new Intl.DisplayNames(['en'], {type:'region'});
+const countrySelect = document.getElementById('country');
+
+const countries = [...new Set(regionCodes)]
+  .map(code => ({code, name:displayNames.of(code)}))
+  .filter(x => x.name && x.name !== x.code)
+  .sort((a,b) => a.name.localeCompare(b.name));
+
+countries.forEach(c => {
+  const option = document.createElement('option');
+  option.value = c.code;
+  option.textContent = c.name;
+  countrySelect.appendChild(option);
+});
+countrySelect.value = 'US';
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function secureRandom(max){
+  const a = new Uint32Array(1);
+  crypto.getRandomValues(a);
+  return a[0] % max;
+}
+
+function securePassword(length){
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const digits = '0123456789';
+  const symbols = '!@#$%^&*_-+=?';
+  const sets = [chars];
+  if($('numbers').checked) sets.push(digits);
+  if($('symbols').checked) sets.push(symbols);
+  const all = sets.join('');
+  let result = sets.map(set => set[secureRandom(set.length)]);
+  while(result.length < length) result.push(all[secureRandom(all.length)]);
+  for(let i = result.length - 1; i > 0; i--){
+    const j = secureRandom(i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result.join('');
+}
+
+function updateStrength(){
+  const pw = $('password').value;
+  const len = pw.length;
+  $('strengthLen').textContent = len + ' chars';
+  let score = 0;
+  if(len >= 8) score++;
+  if(len >= 12) score++;
+  if(len >= 16) score++;
+  if(/[A-Z]/.test(pw)) score++;
+  if(/[a-z]/.test(pw)) score++;
+  if(/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const pct = Math.min(100, (score / 7) * 100);
+  const fill = $('strengthFill');
+  fill.style.width = pct + '%';
+  let label = 'Weak', color = '#e5484d';
+  if(score >= 5){ label = 'Strong'; color = '#16a36a'; }
+  else if(score >= 3){ label = 'Medium'; color = '#f59e0b'; }
+  fill.style.background = color;
+  $('strengthText').textContent = 'Strength: ' + label;
+  $('strengthText').style.color = color;
+}
+
+function generatePassword(){
+  const len = Number($('passLength').value);
+  $('password').value = securePassword(len);
+  updateStrength();
+}
+
+function generateAll(){
+  const pool = pools[countrySelect.value] || defaultPool;
+  $('first').textContent = pick(pool.f);
+  $('last').textContent = pick(pool.l);
+  generatePassword();
+}
+
+$('passLength').addEventListener('change', generatePassword);
+$('symbols').addEventListener('change', generatePassword);
+$('numbers').addEventListener('change', generatePassword);
+
+document.addEventListener('keydown', e => {
+  if(e.target.matches('input, textarea, select')) return;
+  if(e.code === 'Space'){ e.preventDefault(); generateAll(); }
+});
+
+function toggleCookie(){
+  $('cookieField').style.display = $('useCookie').checked ? 'block' : 'none';
+}
+
+/* ============================================================
+   RECORDS
+   ============================================================ */
+let records = [];
+try {
+  const saved = localStorage.getItem('nameforge_pro_records');
+  records = saved ? JSON.parse(saved) : [];
+  if(!Array.isArray(records)) records = [];
+} catch(e){ records = []; }
+
+function persist(){
+  try {
+    localStorage.setItem('nameforge_pro_records', JSON.stringify(records));
+    renderRecords();
+  } catch(e){
+    toast('Storage full or unavailable. Export your records first.', 'error');
+  }
+}
+
+function openSave(){
+  $('savePanel').hidden = false;
+  $('contact').focus();
+  $('savePanel').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function closeSave(){ $('savePanel').hidden = true; }
+
+function saveRecord(){
+  const rec = {
+    id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7),
+    country: countrySelect.value,
+    countryName: countrySelect.options[countrySelect.selectedIndex].text,
+    first: $('first').textContent,
+    last: $('last').textContent,
+    password: $('password').value,
+    contact: $('contact').value.trim(),
+    cookie: $('useCookie').checked ? $('cookie').value.trim() : '',
+    notes: $('notes').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+  records.unshift(rec);
+  try {
+    localStorage.setItem('nameforge_pro_records', JSON.stringify(records));
+    renderRecords();
+    $('contact').value = '';
+    $('cookie').value = '';
+    $('notes').value = '';
+    $('useCookie').checked = false;
+    $('cookieField').style.display = 'none';
+    closeSave();
+    toast('Record saved successfully!', 'success');
+  } catch(e){
+    records.shift();
+    toast('Unable to save. Browser storage may be full.', 'error');
+  }
+}
+
+function renderRecords(){
+  const total = records.length;
+  $('total').textContent = total;
+  const today = new Date().toDateString();
+  $('today').textContent = records.filter(r => new Date(r.createdAt).toDateString() === today).length;
+
+  const list = $('savedList');
+  list.replaceChildren();
+
+  const query = $('search').value.toLowerCase().trim();
+  let view = records.filter(r => {
+    if(!query) return true;
+    return (r.first + ' ' + r.last + ' ' + r.contact + ' ' + r.countryName).toLowerCase().includes(query);
+  });
+
+  const sortBy = $('sortBy').value;
+  if(sortBy === 'oldest') view = [...view].reverse();
+  else if(sortBy === 'name') view = [...view].sort((a,b) => (a.first + a.last).localeCompare(b.first + b.last));
+
+  if(!view.length){
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.innerHTML = query
+      ? '<span class="empty-icon">🔍</span>No matching records found.'
+      : '<span class="empty-icon">📭</span>No records yet.<br>Generate a name and click Save Record.';
+    list.appendChild(empty);
+    return;
+  }
+
+  view.slice(0, 40).forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'saved-item';
+
+    const top = document.createElement('div');
+    top.className = 'saved-top';
+    const name = document.createElement('div');
+    name.className = 'saved-name';
+    name.textContent = r.first + ' ' + r.last;
+    const country = document.createElement('span');
+    country.className = 'saved-country';
+    country.textContent = r.country;
+    top.append(name, country);
+
+    const meta = document.createElement('div');
+    meta.className = 'saved-meta';
+    const parts = [];
+    if(r.contact) parts.push('📧 ' + r.contact);
+    if(r.cookie) parts.push('🍪 cookie');
+    if(r.notes) parts.push('📝 ' + r.notes);
+    parts.push(new Date(r.createdAt).toLocaleDateString());
+    meta.textContent = parts.join(' · ');
+
+    const actions = document.createElement('div');
+    actions.className = 'saved-actions';
+
+    const load = document.createElement('button');
+    load.className = 'btn secondary';
+    load.textContent = 'Load';
+    load.onclick = () => loadRecord(r.id);
+
+    const copy = document.createElement('button');
+    copy.className = 'btn outline';
+    copy.textContent = 'Copy';
+    copy.onclick = () => copyRecord(r.id);
+
+    const del = document.createElement('button');
+    del.className = 'btn danger';
+    del.textContent = 'Delete';
+    del.onclick = () => deleteRecord(r.id);
+
+    actions.append(load, copy, del);
+    item.append(top, meta, actions);
+    list.appendChild(item);
+  });
+
+  if(view.length > 40){
+    const more = document.createElement('div');
+    more.className = 'muted';
+    more.style.textAlign = 'center';
+    more.style.padding = '8px';
+    more.textContent = 'Showing 40 of ' + view.length + ' — export to access all.';
+    list.appendChild(more);
+  }
+}
+
+function loadRecord(id){
+  const r = records.find(x => x.id === id);
+  if(!r) return;
+  countrySelect.value = r.country;
+  $('first').textContent = r.first;
+  $('last').textContent = r.last;
+  $('password').value = r.password;
+  $('contact').value = r.contact || '';
+  $('cookie').value = r.cookie || '';
+  $('notes').value = r.notes || '';
+  $('useCookie').checked = !!r.cookie;
+  $('cookieField').style.display = r.cookie ? 'block' : 'none';
+  updateStrength();
+  toast('Record loaded.');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function copyText(text){
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('Copied to clipboard!', 'success');
+  } catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    toast('Copied to clipboard!', 'success');
+  }
+}
+function copyValue(id){
+  const el = $(id);
+  copyText(el.value || el.textContent);
+}
+function copyRecord(id){
+  const r = records.find(x => x.id === id);
+  if(!r) return;
+  const lines = [
+    'First name: ' + r.first,
+    'Last name: ' + r.last,
+    'Country: ' + r.countryName,
+    'Password: ' + r.password,
+  ];
+  if(r.contact) lines.push('Contact: ' + r.contact);
+  if(r.cookie) lines.push('Cookie: ' + r.cookie);
+  if(r.notes) lines.push('Notes: ' + r.notes);
+  copyText(lines.join('\n'));
+}
+
+function deleteRecord(id){
+  if(!confirm('Delete this saved record?')) return;
+  records = records.filter(r => r.id !== id);
+  persist();
+  toast('Record deleted.');
+}
+function clearRecords(){
+  if(!records.length){ toast('No records to delete.', 'error'); return; }
+  if(!confirm('Permanently delete all saved records from this browser?')) return;
+  records = [];
+  persist();
+  toast('All records deleted.');
+}
+
+function csvEscape(value){
+  return '"' + String(value ?? '').replace(/"/g, '""') + '"';
+}
+function downloadFile(content, type, filename){
+  const blob = new Blob([content], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function exportData(format){
+  if(!records.length){ toast('Save at least one record before exporting.', 'error'); return; }
+  const stamp = new Date().toISOString().slice(0,10);
+  let content, type, extension;
+  if(format === 'json'){
+    content = JSON.stringify(records, null, 2);
+    type = 'application/json;charset=utf-8'; extension = 'json';
+  } else if(format === 'csv'){
+    const fields = ['first','last','country','countryName','password','contact','cookie','notes','createdAt'];
+    content = '\uFEFF' + [fields, ...records.map(r => fields.map(f => r[f] ?? ''))]
+      .map(row => row.map(csvEscape).join(',')).join('\r\n');
+    type = 'text/csv;charset=utf-8'; extension = 'csv';
+  } else {
+    content = records.map((r,i) => [
+      'Record ' + (i+1),
+      'First name: ' + r.first,
+      'Last name: ' + r.last,
+      'Country: ' + r.countryName,
+      'Password: ' + r.password,
+      'Contact: ' + (r.contact || ''),
+      'Cookie: ' + (r.cookie || ''),
+      'Notes: ' + (r.notes || ''),
+      'Created: ' + r.createdAt,
+      '-------------------------'
+    ].join('\n')).join('\n\n');
+    type = 'text/plain;charset=utf-8'; extension = 'txt';
+  }
+  downloadFile(content, type, 'nameforge-records-' + stamp + '.' + extension);
+  toast(extension.toUpperCase() + ' export started.', 'success');
+}
+
+let toastTimer;
+function toast(message, type = ''){
+  const el = $('toast');
+  el.textContent = message;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = 'toast', 2500);
+}
+
+generateAll();
+renderRecords();
+</script>
+</body>
+</html>
